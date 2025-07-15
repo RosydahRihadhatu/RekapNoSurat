@@ -1,18 +1,20 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-class DbHelper {
-  static final DbHelper _instance = DbHelper._internal();
-  DbHelper._internal();
-  factory DbHelper() => _instance;
+class DBHelper {
+  static final DBHelper _instance = DBHelper._internal();
+  factory DBHelper() => _instance;
+  DBHelper._internal();
 
   static Database? _database;
+
   Future<Database> get database async {
-    _database ??= await _initDb();
+    if (_database != null) return _database!;
+    _database = await initDatabase();
     return _database!;
   }
 
-  Future<Database> _initDb() async {
+  Future<Database> initDatabase() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'surat.db');
 
@@ -23,14 +25,14 @@ class DbHelper {
     await db.execute('''
       CREATE TABLE surat (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nomor TEXT,
-        isMasuk INTEGER,
-        tanggal TEXT,
-        tipe TEXT,
-        kategori TEXT,
-        perihal TEXT,
+        nomor TEXT NOT NULL,
+        isMasuk INTEGER NOT NULL,
+        tanggal TEXT NOT NULL,
         asal TEXT,
         tujuan TEXT,
+        tipe TEXT,
+        kategori TEXT,
+        perihal TEXT NOT NULL,
         keterangan TEXT,
         bulanRomawi TEXT,
         tahun TEXT

@@ -1,8 +1,8 @@
-import '../models/surat_model.dart';
 import 'db_helper.dart';
+import '../models/surat_model.dart';
 
 class SuratDao {
-  final dbHelper = DbHelper();
+  final dbHelper = DBHelper();
 
   Future<int> insertSurat(SuratModel surat) async {
     final db = await dbHelper.database;
@@ -26,22 +26,24 @@ class SuratDao {
 
   Future<List<SuratModel>> getAllSurat() async {
     final db = await dbHelper.database;
-    final List<Map<String, dynamic>> result = await db.query(
-      'surat',
-      orderBy: 'id ASC',
-    );
-    return result.map((map) => SuratModel.fromMap(map)).toList();
+    final maps = await db.query('surat', orderBy: 'id DESC');
+    return maps.map((map) => SuratModel.fromMap(map)).toList();
   }
 
-  Future<int> getLastKeluarNumber() async {
+  Future<int> getLastNomorSuratKeluar() async {
     final db = await dbHelper.database;
-    final result = await db.rawQuery(
-      "SELECT nomor FROM surat WHERE isMasuk = 0 ORDER BY id DESC LIMIT 1",
-    );
-    if (result.isNotEmpty) {
-      final lastNomor = result.first['nomor'] as String;
-      return int.tryParse(lastNomor) ?? 0;
-    }
-    return 0;
+    final result = await db.rawQuery('''
+      SELECT nomor FROM surat 
+      WHERE isMasuk = 0 
+      ORDER BY id DESC 
+      LIMIT 1
+    ''');
+
+    if (result.isEmpty) return 0;
+
+    final lastNomor = result.first['nomor'] as String;
+    // Ambil tiga digit pertama dari "005/..." → jadi 5
+    final parts = lastNomor.split('/');
+    return int.tryParse(parts[0]) ?? 0;
   }
 }

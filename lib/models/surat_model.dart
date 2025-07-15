@@ -3,12 +3,17 @@ class SuratModel {
   final String nomor;
   final bool isMasuk;
   final String tanggal;
-  final String tipe;
-  final String kategori;
   final String perihal;
-  final String? asal; // untuk surat masuk
-  final String? tujuan; // untuk surat keluar
+
+  // Untuk surat masuk
+  final String? asal;
+
+  // Untuk surat keluar
+  final String? tujuan;
+  final String? tipe;
+  final String? kategori;
   final String? keterangan;
+
   final String bulanRomawi;
   final String tahun;
 
@@ -17,11 +22,11 @@ class SuratModel {
     required this.nomor,
     required this.isMasuk,
     required this.tanggal,
-    required this.tipe,
-    required this.kategori,
     required this.perihal,
     this.asal,
     this.tujuan,
+    this.tipe,
+    this.kategori,
     this.keterangan,
     required this.bulanRomawi,
     required this.tahun,
@@ -33,11 +38,11 @@ class SuratModel {
       'nomor': nomor,
       'isMasuk': isMasuk ? 1 : 0,
       'tanggal': tanggal,
-      'tipe': tipe,
-      'kategori': kategori,
       'perihal': perihal,
       'asal': asal,
       'tujuan': tujuan,
+      'tipe': tipe,
+      'kategori': kategori,
       'keterangan': keterangan,
       'bulanRomawi': bulanRomawi,
       'tahun': tahun,
@@ -50,11 +55,11 @@ class SuratModel {
       nomor: map['nomor'],
       isMasuk: map['isMasuk'] == 1,
       tanggal: map['tanggal'],
-      tipe: map['tipe'],
-      kategori: map['kategori'],
       perihal: map['perihal'],
       asal: map['asal'],
       tujuan: map['tujuan'],
+      tipe: map['tipe'],
+      kategori: map['kategori'],
       keterangan: map['keterangan'],
       bulanRomawi: map['bulanRomawi'],
       tahun: map['tahun'],
@@ -66,11 +71,11 @@ class SuratModel {
     String? nomor,
     bool? isMasuk,
     String? tanggal,
-    String? tipe,
-    String? kategori,
     String? perihal,
     String? asal,
     String? tujuan,
+    String? tipe,
+    String? kategori,
     String? keterangan,
     String? bulanRomawi,
     String? tahun,
@@ -80,11 +85,11 @@ class SuratModel {
       nomor: nomor ?? this.nomor,
       isMasuk: isMasuk ?? this.isMasuk,
       tanggal: tanggal ?? this.tanggal,
-      tipe: tipe ?? this.tipe,
-      kategori: kategori ?? this.kategori,
       perihal: perihal ?? this.perihal,
       asal: asal ?? this.asal,
       tujuan: tujuan ?? this.tujuan,
+      tipe: tipe ?? this.tipe,
+      kategori: kategori ?? this.kategori,
       keterangan: keterangan ?? this.keterangan,
       bulanRomawi: bulanRomawi ?? this.bulanRomawi,
       tahun: tahun ?? this.tahun,
