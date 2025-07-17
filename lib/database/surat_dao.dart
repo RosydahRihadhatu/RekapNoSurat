@@ -6,7 +6,14 @@ class SuratDao {
 
   Future<int> insertSurat(SuratModel surat) async {
     final db = await dbHelper.database;
-    return await db.insert('surat', surat.toMap());
+    final id = await db.insert('surat', surat.toMap());
+
+    // Tambahkan counter jika surat keluar
+    if (!surat.isMasuk) {
+      await dbHelper.incrementNomorSuratKeluar();
+    }
+
+    return id;
   }
 
   Future<int> updateSurat(SuratModel surat) async {
@@ -30,19 +37,8 @@ class SuratDao {
     return maps.map((map) => SuratModel.fromMap(map)).toList();
   }
 
+  /// Ambil counter nomor terakhir dari tabel `nomor_counter`
   Future<int> getLastNomorSuratKeluar() async {
-    final db = await dbHelper.database;
-    final result = await db.rawQuery('''
-    SELECT nomor FROM surat 
-    WHERE isMasuk = 0 
-    ORDER BY CAST(SUBSTR(nomor, 1, 3) AS INTEGER) DESC 
-    LIMIT 1
-  ''');
-
-    if (result.isEmpty) return 0;
-
-    final lastNomor = result.first['nomor'] as String;
-    final parts = lastNomor.split('/');
-    return int.tryParse(parts[0]) ?? 0;
+    return await dbHelper.getLastNomorSuratKeluar();
   }
 }

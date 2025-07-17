@@ -49,8 +49,8 @@ class _FormScreenState extends State<FormScreen> {
     super.initState();
     isEdit = widget.surat != null;
 
-    final surat = widget.surat;
-    if (isEdit && surat != null) {
+    if (isEdit) {
+      final surat = widget.surat!;
       nomor = surat.nomor;
       tanggal = surat.tanggal;
       perihal = surat.perihal;
@@ -69,7 +69,11 @@ class _FormScreenState extends State<FormScreen> {
       kategori = 'IZN';
       keterangan = '';
       nomor = '';
-      if (!widget.isMasuk) _generateNomorKeluar();
+
+      // Hanya surat keluar yang nomornya otomatis
+      if (!widget.isMasuk) {
+        _generateNomorKeluar();
+      }
     }
   }
 
@@ -77,10 +81,11 @@ class _FormScreenState extends State<FormScreen> {
     final last = await dao.getLastNomorSuratKeluar();
     final newNumber = last + 1;
     nomor = newNumber.toString().padLeft(3, '0');
-
-    setState(() {
-      _nomorController.text = nomor;
-    });
+    if (mounted) {
+      setState(() {
+        _nomorController.text = nomor;
+      });
+    }
   }
 
   void _save() async {
@@ -111,7 +116,7 @@ class _FormScreenState extends State<FormScreen> {
       await dao.insertSurat(surat);
     }
 
-    if (context.mounted) Navigator.pop(context, true); // <- kirim "true"
+    if (context.mounted) Navigator.pop(context, true);
   }
 
   @override
@@ -216,12 +221,14 @@ class _FormScreenState extends State<FormScreen> {
                           .key,
                   decoration: const InputDecoration(labelText: 'Kategori'),
                   items:
-                      kategoriOptions.entries.map((entry) {
-                        return DropdownMenuItem<String>(
-                          value: entry.key, // yang ditampilkan user
-                          child: Text(entry.key),
-                        );
-                      }).toList(),
+                      kategoriOptions.entries
+                          .map(
+                            (entry) => DropdownMenuItem<String>(
+                              value: entry.key,
+                              child: Text(entry.key),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setState(() => kategori = kategoriOptions[val]!);
@@ -231,7 +238,6 @@ class _FormScreenState extends State<FormScreen> {
                     if (val != null) kategori = kategoriOptions[val]!;
                   },
                 ),
-
                 const SizedBox(height: 8),
               ],
 
@@ -242,7 +248,6 @@ class _FormScreenState extends State<FormScreen> {
                 onSaved: (val) => perihal = val ?? '',
               ),
 
-              // KETERANGAN (hanya keluar)
               if (!isMasuk)
                 TextFormField(
                   initialValue: keterangan,
