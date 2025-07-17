@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import '../models/surat_model.dart';
 import '../screens/detail_screen.dart';
+import '../database/surat_dao.dart';
 
 class SuratListTile extends StatelessWidget {
   final SuratModel surat;
+  final VoidCallback onRefresh;
 
-  const SuratListTile({super.key, required this.surat});
+  const SuratListTile({
+    super.key,
+    required this.surat,
+    required this.onRefresh,
+  });
 
   String get formattedNomor {
     if (surat.isMasuk) {
       return surat.nomor;
     } else {
-      // Tipe singkatan: Bersama -> B, Pribadi -> P
       final tipeSingkat =
           (surat.tipe?.toLowerCase() ?? '') == 'bersama' ? 'B' : 'P';
       return '${surat.nomor}/II.03.AU/06.04/$tipeSingkat/${surat.kategori}/${surat.bulanRomawi}/${surat.tahun}';
@@ -25,7 +30,10 @@ class SuratListTile extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => DetailScreen(surat: surat)),
-        );
+        ).then((value) {
+          // Refresh jika kembali dari detail
+          onRefresh();
+        });
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -65,9 +73,7 @@ class SuratListTile extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Padding(
-              padding: const EdgeInsets.only(
-                left: 18.0,
-              ), // sejajar dengan text di atas
+              padding: const EdgeInsets.only(left: 18.0),
               child: Text(
                 surat.perihal,
                 style: const TextStyle(

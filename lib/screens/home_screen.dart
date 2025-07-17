@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    futureSurat = suratDao.getAllSurat();
+    _refreshData();
   }
 
   Future<void> _refreshData() async {
@@ -28,11 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToForm(bool isMasuk) async {
-    await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => FormScreen(isMasuk: isMasuk)),
     );
-    _refreshData();
+
+    if (result == true && mounted) {
+      _refreshData();
+    }
   }
 
   @override
@@ -42,22 +45,19 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('DAFTAR NOMOR SURAT'),
         actions: [
           PopupMenuButton<String>(
+            icon: const Icon(Icons.add),
             onSelected: (value) {
-              if (value == 'masuk') {
-                _navigateToForm(true);
-              } else {
-                _navigateToForm(false);
-              }
+              _navigateToForm(value == 'masuk');
             },
             itemBuilder:
-                (context) => [
-                  const PopupMenuItem(
+                (_) => const [
+                  PopupMenuItem(
                     value: 'masuk',
-                    child: Text('Surat Masuk'),
+                    child: Text('Tambah Surat Masuk'),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'keluar',
-                    child: Text('Surat Keluar'),
+                    child: Text('Tambah Surat Keluar'),
                   ),
                 ],
           ),
@@ -73,15 +73,21 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Belum ada data surat'));
           }
+
           final list = snapshot.data!;
           return RefreshIndicator(
             onRefresh: _refreshData,
             child: ListView.separated(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: list.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final surat = list[index];
-                return SuratListTile(surat: surat);
+                return SuratListTile(
+                  surat: surat,
+                  onRefresh:
+                      _refreshData, // agar bisa refresh setelah edit/hapus
+                );
               },
             ),
           );

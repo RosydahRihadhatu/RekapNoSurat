@@ -111,7 +111,7 @@ class _FormScreenState extends State<FormScreen> {
       await dao.insertSurat(surat);
     }
 
-    if (context.mounted) Navigator.pop(context);
+    if (context.mounted) Navigator.pop(context, true); // <- kirim "true"
   }
 
   @override

@@ -33,16 +33,15 @@ class SuratDao {
   Future<int> getLastNomorSuratKeluar() async {
     final db = await dbHelper.database;
     final result = await db.rawQuery('''
-      SELECT nomor FROM surat 
-      WHERE isMasuk = 0 
-      ORDER BY id DESC 
-      LIMIT 1
-    ''');
+    SELECT nomor FROM surat 
+    WHERE isMasuk = 0 
+    ORDER BY CAST(SUBSTR(nomor, 1, 3) AS INTEGER) DESC 
+    LIMIT 1
+  ''');
 
     if (result.isEmpty) return 0;
 
     final lastNomor = result.first['nomor'] as String;
-    // Ambil tiga digit pertama dari "005/..." → jadi 5
     final parts = lastNomor.split('/');
     return int.tryParse(parts[0]) ?? 0;
   }
