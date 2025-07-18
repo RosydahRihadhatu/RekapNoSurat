@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/surat_model.dart';
 import '../database/surat_dao.dart';
 import '../utils/date_utils.dart';
+import '../constants/kategori_constant.dart';
+import '../theme/app_colors.dart';
 
 class FormScreen extends StatefulWidget {
   final bool isMasuk;
@@ -17,11 +19,7 @@ class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
   final dao = SuratDao();
 
-  final Map<String, String> kategoriOptions = {
-    'Undangan': 'UND',
-    'Izin': 'IZN',
-    'LPJ': 'LPJ',
-  };
+  final Map<String, String> kategoriOptions = KategoriConstants.options;
 
   late bool isEdit;
   late String nomor;
@@ -145,8 +143,9 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     final isMasuk = widget.isMasuk;
     final backgroundColor =
-        isMasuk ? const Color(0xFFFFF0F5) : const Color(0xFFE6F0FF);
-    final simpanColor = isMasuk ? Colors.pink : Colors.blue;
+        isMasuk ? AppColors.masukBackground : AppColors.keluarBackground;
+    final simpanColor =
+        isMasuk ? AppColors.masukColor : AppColors.keluarColor;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -161,7 +160,6 @@ class _FormScreenState extends State<FormScreen> {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Form(

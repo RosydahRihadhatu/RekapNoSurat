@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nobook/theme/app_colors.dart';
 import '../models/surat_model.dart';
 import '../screens/detail_screen.dart';
-import '../database/surat_dao.dart';
 
 class SuratListTile extends StatelessWidget {
   final SuratModel surat;
@@ -56,7 +56,10 @@ class SuratListTile extends StatelessWidget {
               width: 6,
               height: 60,
               decoration: BoxDecoration(
-                color: surat.isMasuk ? Colors.pink : Colors.blue,
+                color:
+                    surat.isMasuk
+                        ? AppColors.masukColor
+                        : AppColors.keluarColor,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -82,8 +85,8 @@ class SuratListTile extends StatelessWidget {
                       fontSize: 16,
                       color:
                           surat.isMasuk
-                              ? const Color(0xFFAD1457)
-                              : const Color(0xFF1565C0),
+                              ? AppColors.masukColor
+                              : AppColors.keluarColor,
                     ),
                   ),
                   const SizedBox(height: 4),
