@@ -31,7 +31,6 @@ class SuratListTile extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (_) => DetailScreen(surat: surat)),
         ).then((value) {
-          // Refresh jika kembali dari detail
           onRefresh();
         });
       },
@@ -49,49 +48,55 @@ class SuratListTile extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 6,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: surat.isMasuk ? Colors.pink : Colors.blue,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
+            // Garis warna vertikal
+            Container(
+              width: 6,
+              height: 60,
+              decoration: BoxDecoration(
+                color: surat.isMasuk ? Colors.pink : Colors.blue,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // Konten isi
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Nomor surat
+                  Text(
                     formattedNomor,
                     style: const TextStyle(fontSize: 12, color: Colors.black87),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 18.0),
-              child: Text(
-                surat.perihal,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 18.0),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  _formatTanggal(surat.tanggal),
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
+                  const SizedBox(height: 4),
+
+                  // Perihal
+                  Text(
+                    surat.perihal,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color:
+                          surat.isMasuk
+                              ? const Color(0xFFAD1457)
+                              : const Color(0xFF1565C0),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+
+                  // Tanggal di kanan bawah
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      _formatTanggal(surat.tanggal),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

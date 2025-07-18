@@ -41,8 +41,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE4E4E4), // Warna body E4E4E4
       appBar: AppBar(
-        title: const Text('DAFTAR NOMOR SURAT'),
+        backgroundColor: Colors.white, // Warna AppBar putih
+        foregroundColor: Colors.black,
+        elevation: 0,
+        title: const Text(
+          'DAFTAR NOMOR SURAT',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.add),
@@ -77,17 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
           final list = snapshot.data!;
           return RefreshIndicator(
             onRefresh: _refreshData,
-            child: ListView.separated(
+            child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: list.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final surat = list[index];
-                return SuratListTile(
-                  surat: surat,
-                  onRefresh:
-                      _refreshData, // agar bisa refresh setelah edit/hapus
-                );
+                return SuratListTile(surat: surat, onRefresh: _refreshData);
               },
             ),
           );

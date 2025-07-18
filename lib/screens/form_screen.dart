@@ -18,17 +18,8 @@ class _FormScreenState extends State<FormScreen> {
   final dao = SuratDao();
 
   final Map<String, String> kategoriOptions = {
-    'Pedoman': 'PED',
-    'Surat Keputusan': 'KEP',
-    'Surat Edaran': 'EDR',
-    'Surat Pernyataan': 'PER',
-    'Surat Kuasa': 'KSA',
-    'Surat Tugas': 'TGS',
-    'Surat Rekomendasi': 'REK',
-    'Surat Keterangan': 'KET',
-    'Surat Izin': 'IZN',
-    'Surat Undangan': 'UND',
-    'Permohonan Dana': 'PD',
+    'Undangan': 'UND',
+    'Izin': 'IZN',
     'LPJ': 'LPJ',
   };
 
@@ -66,11 +57,10 @@ class _FormScreenState extends State<FormScreen> {
       asal = '';
       tujuan = '';
       tipe = 'Pribadi';
-      kategori = 'IZN';
+      kategori = 'UND';
       keterangan = '';
       nomor = '';
 
-      // Hanya surat keluar yang nomornya otomatis
       if (!widget.isMasuk) {
         _generateNomorKeluar();
       }
@@ -119,145 +109,201 @@ class _FormScreenState extends State<FormScreen> {
     if (context.mounted) Navigator.pop(context, true);
   }
 
+  Widget buildField(String label, Widget input) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: input),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration inputDecoration() {
+    return InputDecoration(
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide.none,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMasuk = widget.isMasuk;
+    final backgroundColor =
+        isMasuk ? const Color(0xFFFFF0F5) : const Color(0xFFE6F0FF);
+    final simpanColor = isMasuk ? Colors.pink : Colors.blue;
 
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? 'Edit Surat' : 'Tambah Surat')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.black,
+        centerTitle: true,
+        title: Text(
+          '${isEdit ? 'Ubah' : 'Tambah'} Surat ${widget.isMasuk ? 'Masuk' : 'Keluar'}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              // NOMOR
-              isMasuk
-                  ? TextFormField(
-                    initialValue: nomor,
-                    decoration: const InputDecoration(labelText: 'Nomor'),
-                    onSaved: (val) => nomor = val ?? '',
-                    validator:
-                        (val) =>
-                            val == null || val.isEmpty
-                                ? 'Nomor harus diisi'
-                                : null,
-                  )
-                  : TextFormField(
-                    controller: _nomorController,
-                    readOnly: true,
-                    enabled: false,
-                    style: const TextStyle(color: Colors.black54),
-                    decoration: InputDecoration(
-                      labelText: 'Nomor',
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+              buildField(
+                'Nomor',
+                isMasuk
+                    ? TextFormField(
+                      initialValue: nomor,
+                      decoration: inputDecoration(),
+                      onSaved: (val) => nomor = val ?? '',
+                      validator:
+                          (val) =>
+                              val == null || val.isEmpty
+                                  ? 'Nomor harus diisi'
+                                  : null,
+                    )
+                    : TextFormField(
+                      controller: _nomorController,
+                      readOnly: true,
+                      enabled: false,
+                      style: const TextStyle(color: Colors.black54),
+                      decoration: inputDecoration(),
                     ),
-                  ),
-              const SizedBox(height: 8),
-
-              // TANGGAL
-              TextFormField(
-                initialValue: tanggal,
-                decoration: const InputDecoration(
-                  labelText: 'Tanggal (yyyy-MM-dd)',
-                ),
-                onSaved: (val) => tanggal = val ?? '',
-                validator:
-                    (val) =>
-                        val == null || val.isEmpty
-                            ? 'Tanggal harus diisi'
-                            : null,
               ),
-              const SizedBox(height: 8),
-
-              // ASAL (jika masuk)
-              if (isMasuk)
+              buildField(
+                'Tanggal',
                 TextFormField(
-                  initialValue: asal,
-                  decoration: const InputDecoration(labelText: 'Asal'),
-                  onSaved: (val) => asal = val,
+                  initialValue: tanggal,
+                  decoration: inputDecoration(),
+                  onSaved: (val) => tanggal = val ?? '',
+                  validator:
+                      (val) =>
+                          val == null || val.isEmpty
+                              ? 'Tanggal harus diisi'
+                              : null,
+                ),
+              ),
+              if (isMasuk)
+                buildField(
+                  'Asal',
+                  TextFormField(
+                    initialValue: asal,
+                    decoration: inputDecoration(),
+                    onSaved: (val) => asal = val,
+                  ),
                 )
               else ...[
-                // TUJUAN
-                TextFormField(
-                  initialValue: tujuan,
-                  decoration: const InputDecoration(labelText: 'Tujuan'),
-                  onSaved: (val) => tujuan = val,
+                buildField(
+                  'Tujuan',
+                  TextFormField(
+                    initialValue: tujuan,
+                    decoration: inputDecoration(),
+                    onSaved: (val) => tujuan = val,
+                  ),
                 ),
-                const SizedBox(height: 8),
-
-                // TIPE
-                DropdownButtonFormField<String>(
-                  value: tipe,
-                  decoration: const InputDecoration(labelText: 'Tipe'),
-                  items:
-                      ['Pribadi', 'Bersama']
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                  onChanged: (val) => setState(() => tipe = val),
-                  onSaved: (val) => tipe = val,
+                buildField(
+                  'Tipe',
+                  DropdownButtonFormField<String>(
+                    value: tipe,
+                    decoration: inputDecoration(),
+                    items:
+                        ['Pribadi', 'Bersama']
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
+                    onChanged: (val) => setState(() => tipe = val),
+                    onSaved: (val) => tipe = val,
+                  ),
                 ),
-                const SizedBox(height: 8),
-
-                // KATEGORI
-                DropdownButtonFormField<String>(
-                  value:
-                      kategoriOptions.entries
-                          .firstWhere(
-                            (e) => e.value == kategori,
-                            orElse: () => kategoriOptions.entries.first,
-                          )
-                          .key,
-                  decoration: const InputDecoration(labelText: 'Kategori'),
-                  items:
-                      kategoriOptions.entries
-                          .map(
-                            (entry) => DropdownMenuItem<String>(
-                              value: entry.key,
-                              child: Text(entry.key),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      setState(() => kategori = kategoriOptions[val]!);
-                    }
-                  },
-                  onSaved: (val) {
-                    if (val != null) kategori = kategoriOptions[val]!;
-                  },
+                buildField(
+                  'Kategori',
+                  DropdownButtonFormField<String>(
+                    value:
+                        kategoriOptions.entries
+                            .firstWhere(
+                              (e) => e.value == kategori,
+                              orElse: () => kategoriOptions.entries.first,
+                            )
+                            .key,
+                    decoration: inputDecoration(),
+                    items:
+                        kategoriOptions.entries
+                            .map(
+                              (entry) => DropdownMenuItem(
+                                value: entry.key,
+                                child: Text(entry.key),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() => kategori = kategoriOptions[val]!);
+                      }
+                    },
+                    onSaved: (val) {
+                      if (val != null) kategori = kategoriOptions[val]!;
+                    },
+                  ),
                 ),
-                const SizedBox(height: 8),
               ],
-
-              // PERIHAL
-              TextFormField(
-                initialValue: perihal,
-                decoration: const InputDecoration(labelText: 'Perihal'),
-                onSaved: (val) => perihal = val ?? '',
-              ),
-
-              if (!isMasuk)
+              buildField(
+                'Perihal',
                 TextFormField(
-                  initialValue: keterangan,
-                  decoration: const InputDecoration(labelText: 'Keterangan'),
-                  onSaved: (val) => keterangan = val,
+                  initialValue: perihal,
+                  decoration: inputDecoration(),
+                  onSaved: (val) => perihal = val ?? '',
                 ),
-              const SizedBox(height: 20),
-
-              // SIMPAN
-              ElevatedButton(onPressed: _save, child: const Text('SIMPAN')),
+              ),
+              if (!isMasuk)
+                buildField(
+                  'Keterangan',
+                  TextFormField(
+                    initialValue: keterangan,
+                    maxLines: 4,
+                    decoration: inputDecoration(),
+                    onSaved: (val) => keterangan = val,
+                  ),
+                ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: simpanColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: _save,
+                  child: const Text('SIMPAN'),
+                ),
+              ),
             ],
           ),
         ),
