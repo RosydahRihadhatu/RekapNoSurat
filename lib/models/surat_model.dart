@@ -17,6 +17,7 @@ class SuratModel {
   final String bulanRomawi;
   final String tahun;
 
+  //konstruktor
   SuratModel({
     this.id,
     required this.nomor,
@@ -32,6 +33,7 @@ class SuratModel {
     required this.tahun,
   });
 
+  //menyimpan ke db 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -49,6 +51,7 @@ class SuratModel {
     };
   }
 
+  // membaca data dari db
   factory SuratModel.fromMap(Map<String, dynamic> map) {
     return SuratModel(
       id: map['id'],

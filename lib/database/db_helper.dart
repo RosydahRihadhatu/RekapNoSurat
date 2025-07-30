@@ -58,7 +58,7 @@ class DBHelper {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Tambah tabel nomor_counter jika belum ada
+      // (contoh) Tambah tabel nomor_counter jika belum ada
       await db.execute('''
         CREATE TABLE nomor_counter (
           id INTEGER PRIMARY KEY,
