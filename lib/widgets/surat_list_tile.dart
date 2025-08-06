@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nobook/theme/app_colors.dart';
 import '../models/surat_model.dart';
 import '../screens/detail_screen.dart';
+import '../utils/date_formatter.dart';
 
 class SuratListTile extends StatelessWidget {
   final SuratModel surat;
@@ -95,7 +96,7 @@ class SuratListTile extends StatelessWidget {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Text(
-                      _formatTanggal(surat.tanggal),
+                      DateFormatter.format(surat.tanggal),
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ),
@@ -106,28 +107,5 @@ class SuratListTile extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatTanggal(String isoDate) {
-    try {
-      final dt = DateTime.parse(isoDate);
-      final bulan = [
-        'Januari',
-        'Februari',
-        'Maret',
-        'April',
-        'Mei',
-        'Juni',
-        'Juli',
-        'Agustus',
-        'September',
-        'Oktober',
-        'November',
-        'Desember',
-      ];
-      return '${dt.day} ${bulan[dt.month - 1]} ${dt.year}';
-    } catch (_) {
-      return isoDate;
-    }
   }
 }
